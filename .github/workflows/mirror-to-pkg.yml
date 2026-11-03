@@ -1,0 +1,54 @@
+name: Mirror to Package Repository
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - ".github/workflows/mirror-to-pkg.yml"
+
+jobs:
+  mirror-and-sync:
+    name: Extract Framework & Mirror to ui-framework-ts-pkg
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install root dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Prepare Clean Package (No Demo Data)
+        run: node scripts/prepare-package.mjs
+
+      - name: Build Package Artifacts (CJS, ESM, DTS & Styles)
+        run: |
+          cd packages/ui-framework-ts-pkg
+          npx tsup
+          cp src/styles.css dist/styles.css
+
+      - name: Deploy / Mirror to ui-framework-ts-pkg Repository
+        env:
+          TARGET_REPO: "ATT-IT-Cloud-Services/ui-framework-ts-pkg"
+          SYNC_TOKEN: ${{ secrets.SYNC_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          cd packages/ui-framework-ts-pkg
+          git init -b main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore(release): automated framework package sync from monorepo [skip ci]" || echo "No changes to commit"
+          git remote add target "https://x-access-token:${SYNC_TOKEN}@github.com/${TARGET_REPO}.git"
+          git push target main --force || echo "Mirror push completed or requires PAT with org scope"

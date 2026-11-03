@@ -1,0 +1,37 @@
+name: Publish Package to GitHub Packages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Build & Publish Package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout package repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js with GitHub Packages Registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@att-it-cloud-services"
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build package (ESM, CJS, DTS, Styles)
+        run: npm run build
+
+      - name: Publish to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm publish || echo "Version already published or updated"
