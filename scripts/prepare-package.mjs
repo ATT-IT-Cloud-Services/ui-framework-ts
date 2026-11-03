@@ -97,6 +97,7 @@ const pkgJson = {
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "next": rootPkg.dependencies["next"] || "^15.2.0",
     "tsup": "^8.3.6",
     "typescript": "^5.7.3"
   }
