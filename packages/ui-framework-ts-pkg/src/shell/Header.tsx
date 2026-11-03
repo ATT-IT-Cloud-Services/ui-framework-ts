@@ -38,7 +38,18 @@ export function Header({
     useLayoutSettings();
 
   const isSticky = settings.headerSticky;
-  const isDark = settings.theme === "dark";
+  const [systemIsDark, setSystemIsDark] = React.useState(false);
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    setSystemIsDark(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setSystemIsDark(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  const isDark =
+    settings.theme === "dark" || (settings.theme === "system" && systemIsDark);
 
   return (
     <header
