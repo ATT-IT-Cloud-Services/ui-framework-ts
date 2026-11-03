@@ -9,6 +9,7 @@ import { OverlayProvider } from "@fw/overlays";
 export const metadata: Metadata = {
   title: "Enterprise UI Framework & Gallery",
   description: "Configurable enterprise UI framework with calm, dense ergonomics for cyber-physical and operations applications.",
+  colorScheme: "light dark",
 };
 
 const themeScript = `
@@ -23,9 +24,18 @@ const themeScript = `
     var isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
     if (isDark) {
       d.classList.add('dark');
+      d.style.colorScheme = 'dark';
     } else {
       d.classList.remove('dark');
+      d.style.colorScheme = 'light';
     }
+    var m = document.querySelector('meta[name="color-scheme"]');
+    if (!m) {
+      m = document.createElement('meta');
+      m.name = 'color-scheme';
+      document.head.appendChild(m);
+    }
+    m.content = isDark ? 'dark' : 'light';
   } catch (e) {}
 })();
 `;

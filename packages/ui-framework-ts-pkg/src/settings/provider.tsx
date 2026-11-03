@@ -131,9 +131,19 @@ export function LayoutSettingsProvider({
 
     if (isDark) {
       root.classList.add("dark");
+      root.style.colorScheme = "dark";
     } else {
       root.classList.remove("dark");
+      root.style.colorScheme = "light";
     }
+
+    let meta = document.querySelector('meta[name="color-scheme"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "color-scheme");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", isDark ? "dark" : "light");
 
     // Radius token
     let radiusValue = "0.375rem"; // 6px default
@@ -204,6 +214,28 @@ export function LayoutSettingsProvider({
       root.removeAttribute("data-reduce-motion");
     }
   }, [settings]);
+
+  // Live system theme listener when theme === "system"
+  React.useEffect(() => {
+    if (settings.theme !== "system" || typeof window === "undefined") return;
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) => {
+      const root = document.documentElement;
+      if (e.matches) {
+        root.classList.add("dark");
+        root.style.colorScheme = "dark";
+      } else {
+        root.classList.remove("dark");
+        root.style.colorScheme = "light";
+      }
+      const meta = document.querySelector('meta[name="color-scheme"]');
+      if (meta) {
+        meta.setAttribute("content", e.matches ? "dark" : "light");
+      }
+    };
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, [settings.theme]);
 
   const updateSettings = React.useCallback(
     (partial: Partial<LayoutSettings>) => {
