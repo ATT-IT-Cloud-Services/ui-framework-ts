@@ -119,6 +119,28 @@ npm run build
 
 ---
 
+## 4a. Localising the header
+
+`Header` and `AppShell` take their copy from the host, so an application keeps its own
+language instead of the framework's English defaults. Controls the host draws itself can be
+switched off.
+
+```tsx
+<AppShell
+  searchLabel="Suchen"
+  searchShortcut="Strg+K"
+  themeLabel="Darstellung wechseln"
+  languageLabel="Sprache wechseln"
+  hideSearch
+  hideLanguage
+  /* slots as before: logoSlot, headerSlot, userMenuSlot, sidebarHeaderSlot … */
+>
+```
+
+`LanguageSwitcher` accepts `showFlag={false}` and `label="…"`; the header renders the
+switcher only when `hideLanguage` is false.
+
+
 ## 5. How to Rebrand
 
 All design tokens are defined as CSS variables in `app/globals.css` and can be customized in one place:

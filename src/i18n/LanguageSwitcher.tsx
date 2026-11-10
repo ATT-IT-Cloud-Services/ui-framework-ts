@@ -10,6 +10,8 @@ export interface LanguageSwitcherProps {
   showName?: boolean;
   className?: string;
   variant?: "dropdown" | "buttons";
+  /** Accessible name of the trigger. */
+  label?: string;
 }
 
 export function LanguageSwitcher({
@@ -17,6 +19,7 @@ export function LanguageSwitcher({
   showName = true,
   className = "",
   variant = "dropdown",
+  label,
 }: LanguageSwitcherProps) {
   const { locale, setLocale } = useI18n();
   const [isOpen, setIsOpen] = React.useState(false);
@@ -72,6 +75,8 @@ export function LanguageSwitcher({
         className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md border border-input bg-background hover:bg-muted/40 transition-colors shadow-2xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         aria-expanded={isOpen}
         aria-haspopup="true"
+        aria-label={label ?? currentMeta.nativeName}
+        title={label ?? currentMeta.nativeName}
       >
         {showFlag ? <span>{currentMeta.flag}</span> : <Globe className="h-3.5 w-3.5 text-muted-foreground" />}
         {showName && <span>{currentMeta.nativeName}</span>}

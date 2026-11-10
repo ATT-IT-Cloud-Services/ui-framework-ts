@@ -35,6 +35,14 @@ export interface AppShellProps {
   hideNavigation?: boolean;
   hideCustomizer?: boolean;
   className?: string;
+  /** Forwarded to the header so the host decides the language. */
+  searchLabel?: string;
+  searchShortcut?: string;
+  themeLabel?: string;
+  languageLabel?: string;
+  hideSearch?: boolean;
+  hideLanguage?: boolean;
+  hideTheme?: boolean;
 }
 
 export function AppShell({
@@ -53,6 +61,13 @@ export function AppShell({
   hideNavigation = false,
   hideCustomizer = false,
   className = "",
+  searchLabel,
+  searchShortcut,
+  themeLabel,
+  languageLabel,
+  hideSearch = false,
+  hideLanguage = false,
+  hideTheme = false,
 }: AppShellProps) {
   const { settings, mobileMenuOpen, setMobileMenuOpen, isCustomizerOpen } = useLayoutSettings();
   const tree = useNavigationTree(navigationItems);
@@ -183,6 +198,13 @@ export function AppShell({
             userMenuSlot={userMenuSlot}
             breadcrumbs={breadcrumbs}
             onOpenSearch={() => setCommandOpen(true)}
+            searchLabel={searchLabel}
+            searchShortcut={searchShortcut}
+            themeLabel={themeLabel}
+            languageLabel={languageLabel}
+            hideSearch={hideSearch}
+            hideLanguage={hideLanguage}
+            hideTheme={hideTheme}
           />
         )}
 

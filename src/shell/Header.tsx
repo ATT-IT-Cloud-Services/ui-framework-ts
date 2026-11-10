@@ -22,6 +22,17 @@ export interface HeaderProps {
   showBreadcrumbs?: boolean;
   onOpenSearch?: () => void;
   className?: string;
+  /** Label of the search trigger. */
+  searchLabel?: string;
+  /** Shortcut hint next to the label. */
+  searchShortcut?: string;
+  /** Tooltip and accessible name of the theme toggle. */
+  themeLabel?: string;
+  /** Accessible name of the language switcher. */
+  languageLabel?: string;
+  hideSearch?: boolean;
+  hideLanguage?: boolean;
+  hideTheme?: boolean;
 }
 
 export function Header({
@@ -33,6 +44,13 @@ export function Header({
   showBreadcrumbs = true,
   onOpenSearch,
   className = "",
+  searchLabel = "Search",
+  searchShortcut = "\u2318K",
+  themeLabel = "Toggle theme",
+  languageLabel = "Change language",
+  hideSearch = false,
+  hideLanguage = false,
+  hideTheme = false,
 }: HeaderProps) {
   const { settings, updateSettings, toggleCustomizer, setMobileMenuOpen } =
     useLayoutSettings();
@@ -138,20 +156,27 @@ export function Header({
         {actionsSlot}
 
         {/* Language switcher */}
-        <LanguageSwitcher variant="dropdown" showName={false} />
+        {!hideLanguage && (
+          <LanguageSwitcher
+            variant="dropdown"
+            showName={false}
+            showFlag={false}
+            label={languageLabel}
+          />
+        )}
 
         {/* Theme mode toggle button */}
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={() =>
-            updateSettings({ theme: isDark ? "light" : "dark" })
-          }
-          title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          aria-label="Toggle Theme"
-        >
-          {isDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
-        </Button>
+        {!hideTheme && (
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => updateSettings({ theme: isDark ? "light" : "dark" })}
+            title={themeLabel}
+            aria-label={themeLabel}
+          >
+            {isDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+          </Button>
+        )}
 
         {/* Customizer drawer toggle button */}
         <Button
